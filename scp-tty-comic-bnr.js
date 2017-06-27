@@ -51,6 +51,7 @@ module.exports = function() {
   });
 
   spooky.on('bnrUrl', function(url) {
+    console.log(url);
     let values = [];
     values[0] = url;
     if(~url.indexOf('comic1040_')) {
