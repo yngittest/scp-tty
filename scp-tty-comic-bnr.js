@@ -10,11 +10,13 @@ const loginPass = process.env.TSUTAYA_PASS;
 const iftttKey = process.env.IFTTT_KEY;
 
 const loginUrl = 'https://www.discas.net/netdvd/tLogin.do?pT=0';
+const logoutUrl = 'http://www.discas.net/netdvd/doLogout.do?pT=0';
 const comicUrl = 'http://movie-tsutaya.tsite.jp/netdvd/topComic.do?pT=0';
 
 module.exports = function() {
   const options = {
-    child: {transport: 'http'}
+    child: {transport: 'http'},
+    casper: {logLevel: 'debug', verbose: true}
   };
 
   const spooky = new Spooky(options, function(err) {
@@ -26,7 +28,11 @@ module.exports = function() {
 
     spooky.start();
 
-    spooky.open(loginUrl);
+    spooky.open(logoutUrl);
+
+    spooky.thenOpen(comicUrl);
+
+    spooky.thenOpen(loginUrl);
 
     spooky.then([{id: loginId, pass: loginPass}, function() {
       this.fill('form#form1', {
@@ -35,17 +41,21 @@ module.exports = function() {
       }, false);
     }]);
 
-    spooky.then(function() {
-      this.click('.tmBox00 .submitButton1');
-    });
+    spooky.thenClick('.tmBox00 .submitButton1');
 
-    spooky.thenOpen(comicUrl);
+    spooky.then(function() {
+      this.waitForSelector('.cosmo_contents-border>a>img', function() {
+        this.emit('echo', 'comic top');
+      });
+    });
 
     spooky.then(function() {
       this.emit('bnrUrl', this.evaluate(function() {
         return document.querySelector('.cosmo_contents-border>a>img').src;
       }));
     });
+
+    spooky.thenOpen(logoutUrl);
 
     spooky.run();
   });
@@ -58,7 +68,6 @@ module.exports = function() {
       values[1] = 'hit!';
     }
     ifttt('tsutaya', iftttKey, values);
-    spooky.destroy();
   });
 
   spooky.on('error', function (e, stack) {
