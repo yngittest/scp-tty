@@ -70,6 +70,10 @@ module.exports = function() {
     ifttt('tsutaya', iftttKey, values);
   });
 
+  spooky.on('echo', function(msg) {
+    console.log(msg);
+  });
+
   spooky.on('error', function (e, stack) {
       console.error(e);
       if (stack) {
