@@ -16,7 +16,7 @@ const comicUrl = 'http://movie-tsutaya.tsite.jp/netdvd/topComic.do?pT=0';
 module.exports = function() {
   const options = {
     child: {transport: 'http'},
-    casper: {logLevel: 'debug', verbose: true, waitTimeout: 10000}
+    casper: {logLevel: 'debug', verbose: true, waitTimeout: 30000}
   };
 
   const spooky = new Spooky(options, function(err) {
