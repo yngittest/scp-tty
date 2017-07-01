@@ -7,6 +7,7 @@ const ifttt = require('./ifttt');
 
 const loginId = process.env.TSUTAYA_ID;
 const loginPass = process.env.TSUTAYA_PASS;
+const bnrPattern = process.env.BNR_PATTERN;
 const iftttKey = process.env.IFTTT_KEY;
 
 const loginUrl = 'https://www.discas.net/netdvd/tLogin.do?pT=0';
@@ -44,9 +45,7 @@ module.exports = function() {
     spooky.thenClick('.tmBox00 .submitButton1');
 
     spooky.then(function() {
-      this.waitForSelector('.cosmo_contents-border>a>img', function() {
-        this.emit('echo', 'comic top');
-      });
+      this.waitForSelector('.cosmo_contents-border>a>img');
     });
 
     spooky.then(function() {
@@ -64,8 +63,9 @@ module.exports = function() {
     console.log(url);
     let values = [];
     values[0] = url;
-    if(~url.indexOf('comic1040_')) {
+    if(~url.indexOf(bnrPattern)) {
       values[1] = 'hit!';
+      console.log(values[1]);
     }
     ifttt('tsutaya', iftttKey, values);
   });
