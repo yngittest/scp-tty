@@ -67,6 +67,7 @@ module.exports = function() {
       values[1] = 'hit!';
       console.log(values[1]);
     }
+    value[2] = comicUrl;
     ifttt('tsutaya', iftttKey, values);
   });
 
